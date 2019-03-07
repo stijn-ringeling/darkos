@@ -1,0 +1,1 @@
+set(ISA_C_FLAGS "-std=gnu99 -ffreestanding -O2 -Wall -Wextra")
