@@ -110,11 +110,18 @@ void terminal_writestring(const char* data)
     terminal_write(data, strlen(data));
 }
 
-void kernel_main(void)
-{
-    /* Initialize terminal interface */
-    terminal_initialize();
+extern "C" {
+    void kernel_main(void)
+    {
+        /* Initialize terminal interface */
+        terminal_initialize();
 
-    /* Newline support is left as an exercise. */
-    terminal_writestring("Hello, kernel World!\n");
+        /* Newline support is left as an exercise. */
+        for(int i = 0; i < 9; i++){
+            terminal_writestring("Hello, kernel World! ");
+            terminal_writestring((const char *) (i + '0'));
+            terminal_writestring("\n");
+        }
+
+    }
 }

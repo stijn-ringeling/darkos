@@ -3,6 +3,9 @@ project(kernel NONE)
 MESSAGE(STATUS "Welcome to darkos!")
 add_subdirectory(src/kernel)
 
-MESSAGE(STATUS "CMAKE compiler" ${CMAKE_C_COMPILER})
+MESSAGE(STATUS "C compiler " ${CMAKE_C_COMPILER})
+MESSAGE(STATUS "CXX compiler " ${CMAKE_CXX_COMPILER})
+
+
 
 

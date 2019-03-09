@@ -4,3 +4,4 @@
 *.iso
 isodir/
 build/
+cmake-build-debug/

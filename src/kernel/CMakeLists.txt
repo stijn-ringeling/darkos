@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 project(kernel NONE)
 #include(../../toolchain.cmake)
 
 FUNCTION(LOAD_PROFILE ISA PLATFORM)
     # Obtain sources for the ISA
-    FILE(GLOB ISA_SRCS "${ISA}/*.c" "${ISA}/*.s")
-    FILE(GLOB PLATFORM_SRCS "${ISA}/${PLATFORM}/*.c" "${ISA}/${PLATFORM}/*.s")
+    FILE(GLOB ISA_SRCS "${ISA}/*.c" "${ISA}/*.cpp" "${ISA}/*.s" )
+    FILE(GLOB PLATFORM_SRCS "${ISA}/${PLATFORM}/*.c" "${ISA}/${PLATFORM}/*.cpp" "${ISA}/${PLATFORM}/*.s" )
 
     # Load flags associated with ISA and Profile
     INCLUDE("${ISA}/flags.cmake")
     INCLUDE("${ISA}/${PLATFORM}/flags.cmake")
+
 
     # Now export our output variables
     SET(ISA_SRCS ${ISA_SRCS} PARENT_SCOPE)
@@ -29,11 +31,21 @@ FILE(GLOB GENERIC_SRCS "*.c")
 
 
 enable_language(C)
+enable_language(CXX)
 enable_language(ASM-ATT)
-MESSAGE(STATUS "Sources " ${PLATFORM_SRCS} " " ${ISA_SRCS} " " ${GENERAL_SRCS})
-MESSAGE(STATUS "C FLAGS " ${ISA_C_FLAGS})
-MESSAGE(STATUS "ASM Flags" ${ISA_ASM_FLAGS})
-ADD_EXECUTABLE(kernel.bin ${PLATFORM_SRCS} ${ISA_SRCS} ${GENERAL_SRCS})
+
+
+execute_process(COMMAND "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} -print-file-name=crtbegin.o" CRT_BEGIN FOO)
+execute_process(COMMAND "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} -print-file-name=crtend.o" CRT_END FOO)
+
+MESSAGE(STATUS "Sources: " ${PLATFORM_SRCS} " " ${ISA_SRCS} " " ${GENERAL_SRCS})
+MESSAGE(STATUS "C FLAGS: " ${ISA_C_FLAGS})
+MESSAGE(STATUS "ASM Flags: " ${ISA_ASM_FLAGS})
+
+MESSAGE(STATUS "crtbegin.o: " ${CRT_BEGIN})
+MESSAGE(STATUS "crteng.o: " ${CRT_END})
+
+ADD_EXECUTABLE(kernel.bin  ${ISA_SRCS}  ${PLATFORM_SRCS} ${GENERAL_SRCS})
 
 set(CMAKE_ASM-ATT_COMPILE_OBJECT "<CMAKE_ASM-ATT_COMPILER> ${ISA_ASM_FLAGS} ${PLATFORM_ASM_FLAGS} -o <OBJECT> <SOURCE>")
 set(CMAKE_C_FLAGS "${ISA_C_FLAGS} ${PLATFORM_C_FLAGS}")
